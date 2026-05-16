@@ -13,6 +13,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
 - Usar ARS como moneda principal, con campos opcionales de referencia en USD cuando los registros del negocio lo requieran.
 - Importar registros principales desde plantillas CSV/Excel con validacion antes de guardar datos.
 - Registrar finanzas, empleados, pagos relacionados con liquidacion, contratos, servicios, operaciones agricolas, perfiles de hacienda, pesos y eventos sanitarios.
+- Mostrar graficos responsive de tendencias operativas como peso de animales a lo largo del tiempo, costos de cultivos, actividad agricola y metricas de produccion/rinde cuando haya datos disponibles.
 - Mostrar recordatorios de pagos por vencer y vencidos dentro de la app, y enviar recordatorios por email a usuarios asignados.
 - Incluir una interfaz operativa oscura y un logo divertido de vaca en la pantalla de inicio de sesion y en la navegacion.
 - Producir artefactos de planificacion bilingues durante todo el proyecto, con ingles como fuente para desarrollo y espanol como equivalente para stakeholders.
@@ -62,7 +63,13 @@ Modulos principales:
 - Cultivos:
   - Campos/lotes.
   - Ciclos de cultivo.
-  - Servicios, costos, contratos y notas vinculados a cultivos.
+  - Servicios, costos, contratos, actividad de campo, metricas de produccion/rinde y notas vinculados a cultivos.
+- Analitica:
+  - Graficos de peso de animales a lo largo del tiempo desde registros de peso.
+  - Graficos de costos de cultivos por lote, ciclo, categoria y rango de fechas.
+  - Graficos de actividad agricola desde eventos de campo y registros de servicios.
+  - Graficos de produccion/rinde cuando se registren metricas de cosecha o salida.
+  - Layouts de graficos responsive que sigan siendo legibles en escritorio y movil.
 - Finanzas:
   - Ingresos, egresos, categorias, contrapartes, obligaciones de pago, estado de pago, vencimientos y adjuntos.
   - Visualizacion primero en ARS, con campos opcionales de referencia en USD.
@@ -99,7 +106,10 @@ Roles:
 - Dado que se sube una plantilla de importacion, cuando los campos requeridos son validos, entonces la app muestra una vista previa de los registros antes de guardarlos.
 - Dado que una importacion contiene filas invalidas, cuando se ejecuta la validacion, entonces la app muestra errores por fila en espanol y no guarda registros invalidos.
 - Dado que un animal tiene registros de peso, cuando un usuario abre el perfil del animal, entonces el perfil muestra el historial de peso en orden cronologico.
+- Dado que un animal tiene multiples registros de peso, cuando un usuario ve el perfil del animal en escritorio o movil, entonces la app muestra un grafico responsive de peso en el tiempo obtenido desde los registros de peso de la base de datos.
 - Dado que un animal tiene registros sanitarios, cuando un usuario abre el perfil del animal, entonces el perfil muestra eventos sanitarios vinculados a ese animal.
+- Dado que existen datos de costos, servicios, actividad de campo o produccion de un ciclo de cultivo, cuando un usuario abre analitica de cultivos, entonces la app muestra graficos responsive filtrados por lote, ciclo de cultivo, rango de fechas y tipo de metrica.
+- Dado que los datos de un grafico faltan o son escasos, cuando un usuario abre un area de graficos, entonces la app muestra un mensaje de estado vacio en espanol en lugar de un grafico roto o enganoso.
 - Dado que una obligacion de pago tiene una fecha de vencimiento futura, cuando esta dentro de la ventana configurada de recordatorio, entonces aparece como proxima en el tablero.
 - Dado que una obligacion de pago esta vencida e impaga, cuando un usuario abre el tablero, entonces aparece como vencida hasta que se marque como pagada.
 - Dado que los recordatorios por email estan habilitados, cuando corre el job de recordatorios, entonces los usuarios asignados reciben recordatorios de obligaciones por vencer y vencidas.

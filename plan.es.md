@@ -4,6 +4,7 @@
 
 - Frontend: Vite, React, TypeScript.
 - UI: tema oscuro, layouts responsive, textos operativos en espanol, contraste accesible y pantallas compactas con alta densidad de datos.
+- Graficos: componentes React responsive para series temporales y graficos por categoria, respaldados por helpers de consulta tipados en vez de datos de ejemplo hard-codeados.
 - Backend: Supabase Auth, Postgres, Row Level Security, Storage y Edge Functions o jobs programados.
 - Importaciones: parseo de CSV y Excel en el flujo de app/backend con vista previa de validacion antes de guardar.
 - Testing: Vitest y React Testing Library para comportamiento frontend, tests de SQL/politicas de Supabase cuando sea practico, y tests de integracion para logica de importacion/recordatorios.
@@ -17,6 +18,10 @@
 - Row Level Security aplica acceso por rol para duenio/admin, usuario de oficina, usuario de campo y solo lectura/contador.
 - Supabase Storage guarda adjuntos como contratos, comprobantes y documentos de soporte.
 - Jobs programados identifican obligaciones de pago proximas y vencidas, y envian recordatorios por email.
+- Las vistas de analitica consultan directamente tablas operativas normalizadas para los graficos v1:
+  - Los graficos de peso de hacienda usan `weight_records` filtrado por `cattle_id` y ordenado por `date`.
+  - Los graficos de cultivos usan `crop_cycles`, `crop_events`, `services`, `financial_transactions` y `crop_outputs` filtrados por lote, ciclo, metrica y rango de fechas.
+  - Los datasets vacios, escasos o restringidos por permisos devuelven estados vacios en espanol en lugar de datos falsos.
 - Flujo de importacion:
   - El usuario selecciona el tipo de registro y sube CSV/Excel.
   - La app parsea el archivo y lo mapea a la plantilla esperada.
@@ -37,10 +42,12 @@ Entidades iniciales del dominio:
 - `health_records`: referencia a hacienda, fecha, tipo, sintomas, tratamiento, medicacion, veterinario, fecha de seguimiento, notas.
 - `crop_fields`: nombre de campo/lote, notas de ubicacion, superficie, estado activo.
 - `crop_cycles`: referencia a lote, cultivo, campana/temporada, fecha de inicio, fecha de fin, estado, notas.
+- `crop_events`: referencia a ciclo de cultivo, referencia a lote, fecha, tipo de evento, cantidad, unidad, notas, usuario que registro.
+- `crop_outputs`: referencia a ciclo de cultivo, referencia a lote, fecha de cosecha/salida, cantidad, unidad, notas de calidad, notas de destino.
 - `counterparties`: proveedores, clientes, contratistas, prestadores de servicios, datos de contacto.
 - `contracts`: referencia a contraparte, tipo, fechas de inicio/fin, resumen, estado, referencias a adjuntos.
-- `services`: registros de servicios agricolas/ganaderos/del negocio, referencia a contraparte, fecha, descripcion, costo, contrato vinculado, notas.
-- `financial_transactions`: tipo ingreso/egreso, categoria, contraparte, monto ARS, monto USD opcional, fecha, descripcion, referencias a adjuntos.
+- `services`: registros de servicios agricolas/ganaderos/del negocio, referencias opcionales a lote/ciclo/animal, referencia a contraparte, fecha, descripcion, costo, contrato vinculado, notas.
+- `financial_transactions`: tipo ingreso/egreso, categoria, contraparte, referencias opcionales a lote/ciclo/servicio, monto ARS, monto USD opcional, fecha, descripcion, referencias a adjuntos.
 - `payment_obligations`: contraparte, contrato/servicio/transaccion origen, monto, moneda, fecha de vencimiento, estado, usuario asignado, fecha de pago.
 - `employees`: identidad/contacto, rol/puesto, fecha de inicio, estado activo, notas.
 - `work_entries`: referencia a empleado, fecha, descripcion del trabajo, horas/dias/cantidad, notas.
@@ -51,12 +58,15 @@ Entidades iniciales del dominio:
 
 El esquema debe empezar lo suficientemente normalizado para soportar importaciones, filtros, recordatorios, reportes y acceso por rol sin sobredisenar reglas legales de contabilidad o liquidacion.
 
+El soporte de graficos debe salir de los mismos registros normalizados usados por las pantallas operativas. La app no debe mantener un almacen separado solo para graficos en v1; si luego el rendimiento lo requiere, se pueden agregar vistas agregadas de reportes sin cambiar el modelo de captura.
+
 ## Dependencias
 
 - Proyecto Supabase y variables de entorno para ambientes local y hosteado.
 - Proveedor de email para recordatorios en produccion.
 - Libreria de parseo CSV/Excel seleccionada durante la implementacion.
 - Utilidades de formato de fecha/moneda para espanol argentino y valores ARS.
+- Libreria de graficos responsive seleccionada durante la implementacion.
 - Asset de icono/logo para la marca de vaca de Campo Control.
 - Revision de dominio contable/laboral antes de cualquier trabajo futuro de calculo legal de liquidacion.
 
@@ -69,6 +79,7 @@ El esquema debe empezar lo suficientemente normalizado para soportar importacion
 - Riesgo de localizacion: los docs en ingles para desarrollo y los docs en espanol para operadores pueden desalinearse si no se mantienen juntos.
 - Riesgo de uso movil: los usuarios de campo necesitan carga rapida en telefono aunque la sincronizacion offline se difiera.
 - Riesgo de modelo de datos: los registros de hacienda, cultivos, servicios y finanzas pueden volverse demasiado genericos si las plantillas v1 no se acotan intencionalmente.
+- Riesgo de analitica: los graficos solo seran utiles si las importaciones y formularios capturan fechas, vinculos a lote/ciclo, unidades y categorias de forma consistente.
 - Riesgo de seguridad: adjuntos, exportaciones de pagos/liquidacion y registros financieros requieren controles cuidadosos de almacenamiento y permisos.
 - Riesgo de testing: los jobs programados y las politicas de Supabase pueden ser mas dificiles de probar que flujos normales de UI.
 
@@ -90,9 +101,9 @@ El esquema debe empezar lo suficientemente normalizado para soportar importacion
 - M5: Tablero y recordatorios de pago
   - Construir obligaciones de pago, estados por vencer/vencido en tablero y job de recordatorio por email.
 - M6: Seguimiento de hacienda
-  - Construir perfiles de hacienda, historial de peso y registros sanitarios.
+  - Construir perfiles de hacienda, historial de peso, graficos de peso en el tiempo y registros sanitarios.
 - M7: Modulos operativos
-  - Construir finanzas, empleados/seguimiento de pagos, contratos/servicios y registros agricolas.
+  - Construir finanzas, empleados/seguimiento de pagos, contratos/servicios, registros agricolas y graficos de analitica de cultivos.
 - M8: Importaciones y reportes
   - Construir importaciones CSV/Excel con vista previa de validacion.
   - Construir exportaciones de pagos/liquidacion y operaciones.
@@ -117,6 +128,7 @@ El esquema debe empezar lo suficientemente normalizado para soportar importacion
   - Denegacion de acceso por rol.
   - Vista previa de importacion, errores de validacion y guardado.
   - Estado de recordatorios en tablero y seleccion del job de email.
-  - Lineas de tiempo de peso/sanidad en perfil de hacienda.
+  - Lineas de tiempo de peso/sanidad en perfil de hacienda y graficos responsive de peso.
+  - Graficos de analitica de cultivos para costos, actividad y metricas de produccion/rinde.
   - Exportacion de pagos/liquidacion.
 - Ejecutar build/typecheck/tests completos antes de aprobar Fase 4.

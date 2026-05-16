@@ -13,6 +13,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 - Use ARS as the primary currency, with optional USD reference fields where business records require it.
 - Import core records from CSV/Excel templates with validation before committing data.
 - Track finances, employees, payroll-related payments, contracts, services, crop operations, cattle profiles, cattle weights, and cattle health events.
+- Show responsive graphs for operational trends such as cow weight over time, crop costs, crop activity, and production/yield metrics when data is available.
 - Show due and overdue payment reminders in the app and send email reminders to assigned users.
 - Include a dark operational UI and a fun cow logo in the login screen and app navigation.
 - Produce bilingual planning artifacts throughout the project, with English as the developer-facing source and Spanish as the stakeholder-facing equivalent.
@@ -62,7 +63,13 @@ Primary modules:
 - Crops:
   - Fields/lots.
   - Crop cycles.
-  - Crop-related services, costs, contracts, and notes.
+  - Crop-related services, costs, contracts, field activity, production/yield metrics, and notes.
+- Analytics:
+  - Cow weight over time charts from weight records.
+  - Crop cost charts by field, crop cycle, category, and date range.
+  - Crop activity charts from field events and service records.
+  - Crop production/yield charts when harvest or output metrics are recorded.
+  - Responsive chart layouts that remain readable on desktop and mobile.
 - Finance:
   - Income, expenses, categories, counterparties, payment obligations, paid status, due dates, and attachments.
   - ARS-first display with optional USD reference fields.
@@ -99,7 +106,10 @@ Roles:
 - Given a spreadsheet import template is uploaded, when required fields are valid, then the app previews records before saving them.
 - Given a spreadsheet import contains invalid rows, when validation runs, then the app shows Spanish row-level errors and does not save invalid records.
 - Given a cow has weight records, when a user opens the cow profile, then the profile shows weight history in chronological order.
+- Given a cow has multiple weight records, when a user views the cow profile on desktop or mobile, then the app shows a responsive weight-over-time graph sourced from database weight records.
 - Given a cow has health records, when a user opens the cow profile, then the profile shows health events linked to that cow.
+- Given crop cycle cost, service, field activity, or production data exists, when a user opens crop analytics, then the app shows responsive graphs filtered by field, crop cycle, date range, and metric type.
+- Given chart data is missing or sparse, when a user opens a graph area, then the app shows an empty-state message in Spanish instead of a broken or misleading chart.
 - Given a payment obligation has a future due date, when it is within the configured reminder window, then it appears as upcoming on the dashboard.
 - Given a payment obligation is past due and unpaid, when a user opens the dashboard, then it appears as overdue until marked paid.
 - Given email reminders are enabled, when the reminder job runs, then assigned users receive reminders for due and overdue payment obligations.

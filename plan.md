@@ -4,6 +4,7 @@
 
 - Frontend: Vite, React, TypeScript.
 - UI: Dark theme, responsive layouts, Spanish operator copy, accessible contrast, and compact data-dense screens.
+- Charts: Responsive React chart components for time-series and category charts, backed by typed query helpers instead of hard-coded sample data.
 - Backend: Supabase Auth, Postgres, Row Level Security, Storage, and Edge Functions or scheduled jobs.
 - Imports: CSV and Excel parsing in the app/backend workflow with validation preview before commit.
 - Testing: Vitest and React Testing Library for frontend behavior, Supabase SQL/policy tests where practical, and integration tests for import/reminder logic.
@@ -17,6 +18,10 @@
 - Row Level Security enforces role-based access for owner/admin, office user, field user, and read-only/accountant.
 - Supabase Storage stores attachments such as contracts, receipts, and supporting documents.
 - Scheduled jobs identify upcoming and overdue payment obligations and send email reminders.
+- Analytics views query normalized operational tables directly for v1 charts:
+  - Cattle weight charts use `weight_records` filtered by `cattle_id` and ordered by `date`.
+  - Crop charts use `crop_cycles`, `crop_events`, `services`, `financial_transactions`, and `crop_outputs` filtered by field, cycle, metric, and date range.
+  - Empty, sparse, and permission-restricted datasets return Spanish empty states instead of fake data.
 - Import workflow:
   - User selects record type and uploads CSV/Excel.
   - App parses the file and maps it to the expected template.
@@ -37,10 +42,12 @@ Initial domain entities:
 - `health_records`: cattle reference, date, type, symptoms, treatment, medication, veterinarian, follow-up date, notes.
 - `crop_fields`: field/lot name, location notes, area, active status.
 - `crop_cycles`: field reference, crop type, season, start date, end date, status, notes.
+- `crop_events`: crop cycle reference, field reference, date, event type, quantity, unit, notes, recorded by.
+- `crop_outputs`: crop cycle reference, field reference, harvest/output date, quantity, unit, quality notes, destination notes.
 - `counterparties`: vendors, customers, contractors, service providers, contact details.
 - `contracts`: counterparty reference, type, start/end dates, summary, status, attachment references.
-- `services`: crop/cattle/business service records, counterparty reference, date, description, cost, linked contract, notes.
-- `financial_transactions`: income/expense type, category, counterparty, amount ARS, optional amount USD, date, description, attachment references.
+- `services`: crop/cattle/business service records, optional crop field/cycle/cattle references, counterparty reference, date, description, cost, linked contract, notes.
+- `financial_transactions`: income/expense type, category, counterparty, optional crop field/cycle/service references, amount ARS, optional amount USD, date, description, attachment references.
 - `payment_obligations`: counterparty, source contract/service/transaction, amount, currency, due date, status, assigned user, paid date.
 - `employees`: identity/contact details, role/job, start date, active status, notes.
 - `work_entries`: employee reference, date, work description, hours/days/quantity, notes.
@@ -51,12 +58,15 @@ Initial domain entities:
 
 The schema should start normalized enough to support imports, filtering, reminders, reports, and role-based access without overbuilding accounting or payroll-specific legal rules.
 
+Chart support should come from the same normalized records used by operational screens. The app should not maintain a separate chart-only data store in v1; if performance requires it later, aggregated reporting views can be added without changing the capture model.
+
 ## Dependencies
 
 - Supabase project and environment variables for local and hosted environments.
 - Email provider for production reminders.
 - CSV/Excel parsing library selected during implementation.
 - Date/currency formatting utilities for Argentine Spanish and ARS values.
+- Responsive charting library selected during implementation.
 - Icon/logo asset for the Campo Control cow mark.
 - Accounting/payroll domain review before any future legal payroll calculation work.
 
@@ -69,6 +79,7 @@ The schema should start normalized enough to support imports, filtering, reminde
 - Localization risk: English developer docs and Spanish operator docs can drift if artifacts are not maintained together.
 - Mobile usability risk: field users need fast entry on phones even though offline sync is deferred.
 - Data model risk: cattle, crop, service, and finance records can become too generic unless v1 templates are intentionally scoped.
+- Analytics risk: graphs will only be useful if imports and forms capture dates, field/cycle links, units, and categories consistently.
 - Security risk: attachments, payroll/payment exports, and financial records need careful storage and permission controls.
 - Testing gap risk: scheduled jobs and Supabase policies may be harder to test than normal UI flows.
 
@@ -90,9 +101,9 @@ The schema should start normalized enough to support imports, filtering, reminde
 - M5: Dashboard and payment reminders
   - Build payment obligations, due/overdue dashboard states, and email reminder job.
 - M6: Cattle tracking
-  - Build cattle profiles, weight history, and health records.
+  - Build cattle profiles, weight history, weight-over-time charts, and health records.
 - M7: Operations modules
-  - Build finance, employees/payroll tracking, contracts/services, and crop records.
+  - Build finance, employees/payroll tracking, contracts/services, crop records, and crop analytics graphs.
 - M8: Imports and reports
   - Build CSV/Excel imports with validation preview.
   - Build payroll/payment and operational exports.
@@ -117,6 +128,7 @@ The schema should start normalized enough to support imports, filtering, reminde
   - Role-based access denial.
   - Spreadsheet import preview, validation errors, and commit.
   - Payment reminder dashboard state and email job selection.
-  - Cattle profile weight/health timelines.
+  - Cattle profile weight/health timelines and responsive weight charts.
+  - Crop analytics charts for costs, activity, and output/yield metrics.
   - Payroll/payment export.
 - Run full build/typecheck/test checks before Phase 4 signoff.
