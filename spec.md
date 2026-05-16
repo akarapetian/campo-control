@@ -8,7 +8,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 
 ## Goals
 
-- Provide a responsive online web app for office and mobile field use.
+- Provide a desktop-first online web app for office and administrative use, with basic responsive tolerance for tablet and narrow browser widths.
 - Support Spanish-only operator screens using Argentine Spanish.
 - Use ARS as the primary currency, with optional USD reference fields where business records require it.
 - Import core records from CSV/Excel templates with validation before committing data.
@@ -25,6 +25,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 - Do not calculate Argentine payroll taxes, statutory deductions, or legal payroll compliance in v1.
 - Do not provide tax filing, accounting certification, or legal compliance guarantees.
 - Do not support offline-first field data entry in v1.
+- Do not build specialized mobile field-entry workflows in v1.
 - Do not build bank, vendor, government, or WhatsApp integrations in v1.
 - Do not support English operator screens in v1.
 - Do not replace specialist veterinary, accounting, or agronomy systems where legally or professionally required.
@@ -41,14 +42,14 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
   - Mark obligations as paid and maintain counterparty records.
 - Field user:
   - Search cattle by tag/identifier.
-  - Add cattle weight records and health events from a phone while online.
-  - Record crop/service activity related to fields and crop cycles.
+  - Add cattle weight records and health events from the desktop-first app while online.
+  - Record crop/service activity related to fields and crop cycles from the desktop-first app.
 - Read-only/accountant:
   - View reports and export finance/payroll data without editing operational records.
 
 ## Design
 
-Campo Control will be a Vite + React web app backed by Supabase Auth, Postgres, Storage, and scheduled jobs. The UI will be dark themed, dense, and operational rather than marketing-oriented. It should prioritize searchable tables, clear status labels, fast mobile entry, and dashboard alerts.
+Campo Control will be a Vite + React web app backed by Supabase Auth, Postgres, Storage, and scheduled jobs. The UI will be dark themed, dense, and operational rather than marketing-oriented. It should prioritize searchable tables, clear status labels, desktop office workflows, and dashboard alerts. Mobile-specific field entry is deferred from v1.
 
 Primary modules:
 
@@ -74,7 +75,7 @@ Primary modules:
   - Crop cost charts by field, crop cycle, category, and date range.
   - Crop activity charts from field events and service records.
   - Crop production/yield charts when harvest or output metrics are recorded.
-  - Responsive chart layouts that remain readable on desktop and mobile.
+  - Chart layouts optimized for desktop and tablet-sized viewports, with graceful narrow-width stacking where practical.
 - Finance:
   - Income, expenses, categories, counterparties, payment obligations, receivables, paid/collected status, due dates, expected collection dates, and attachments.
   - Deferred expense tracking with purchase date, payment/debit date, payment terms, payment method, and paid status.
@@ -112,9 +113,9 @@ Roles:
 - Given a spreadsheet import template is uploaded, when required fields are valid, then the app previews records before saving them.
 - Given a spreadsheet import contains invalid rows, when validation runs, then the app shows Spanish row-level errors and does not save invalid records.
 - Given a cow has weight records, when a user opens the cow profile, then the profile shows weight history in chronological order.
-- Given a cow has multiple weight records, when a user views the cow profile on desktop or mobile, then the app shows a responsive weight-over-time graph sourced from database weight records.
+- Given a cow has multiple weight records, when a user views the cow profile on a desktop or tablet-sized viewport, then the app shows a readable weight-over-time graph sourced from database weight records.
 - Given a cow has health records, when a user opens the cow profile, then the profile shows health events linked to that cow.
-- Given crop cycle cost, service, field activity, or production data exists, when a user opens crop analytics, then the app shows responsive graphs filtered by field, crop cycle, date range, and metric type.
+- Given crop cycle cost, service, field activity, or production data exists, when a user opens crop analytics on a desktop or tablet-sized viewport, then the app shows readable graphs filtered by field, crop cycle, date range, and metric type.
 - Given chart data is missing or sparse, when a user opens a graph area, then the app shows an empty-state message in Spanish instead of a broken or misleading chart.
 - Given a payment obligation has a future due date, when it is within the configured reminder window, then it appears as upcoming on the dashboard.
 - Given a payment obligation is past due and unpaid, when a user opens the dashboard, then it appears as overdue until marked paid.
