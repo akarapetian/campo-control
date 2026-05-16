@@ -18,6 +18,7 @@
 - Row Level Security aplica acceso por rol para duenio/admin, usuario de oficina, usuario de campo y solo lectura/contador.
 - Supabase Storage guarda adjuntos como contratos, comprobantes y documentos de soporte.
 - Jobs programados identifican obligaciones de pago proximas y vencidas, y envian recordatorios por email.
+- Las vistas de flujo de caja del tablero distinguen obligaciones a pagar de cuentas a cobrar, incluyendo cobranzas de ventas de hacienda y gastos diferidos que pueden ser contado, diferidos 30/60 dias o con fecha personalizada.
 - Las vistas de analitica consultan directamente tablas operativas normalizadas para los graficos v1:
   - Los graficos de peso de hacienda usan `weight_records` filtrado por `cattle_id` y ordenado por `date`.
   - Los graficos de cultivos usan `crop_cycles`, `crop_events`, `services`, `financial_transactions` y `crop_outputs` filtrados por lote, ciclo, metrica y rango de fechas.
@@ -38,6 +39,7 @@ Entidades iniciales del dominio:
 
 - `profiles`: perfil de usuario, nombre visible, rol, email de notificaciones, estado activo.
 - `cattle`: caravana/identificador, nombre o etiqueta, estado, sexo, raza, fecha de nacimiento, fecha de adquisicion, origen, notas.
+- `cattle_sales`: referencias a animales o lotes, comprador/contraparte, fecha de venta, monto bruto ARS, monto USD opcional, medio de pago, plazo de pago, fecha esperada de cobro, fecha de cobro, estado, notas.
 - `weight_records`: referencia a hacienda, fecha, peso, unidad, notas, usuario que registro.
 - `health_records`: referencia a hacienda, fecha, tipo, sintomas, tratamiento, medicacion, veterinario, fecha de seguimiento, notas.
 - `crop_fields`: nombre de campo/lote, notas de ubicacion, superficie, estado activo.
@@ -47,8 +49,9 @@ Entidades iniciales del dominio:
 - `counterparties`: proveedores, clientes, contratistas, prestadores de servicios, datos de contacto.
 - `contracts`: referencia a contraparte, tipo, fechas de inicio/fin, resumen, estado, referencias a adjuntos.
 - `services`: registros de servicios agricolas/ganaderos/del negocio, referencias opcionales a lote/ciclo/animal, referencia a contraparte, fecha, descripcion, costo, contrato vinculado, notas.
-- `financial_transactions`: tipo ingreso/egreso, categoria, contraparte, referencias opcionales a lote/ciclo/servicio, monto ARS, monto USD opcional, fecha, descripcion, referencias a adjuntos.
-- `payment_obligations`: contraparte, contrato/servicio/transaccion origen, monto, moneda, fecha de vencimiento, estado, usuario asignado, fecha de pago.
+- `financial_transactions`: tipo ingreso/egreso, categoria, contraparte, referencias opcionales a lote/ciclo/servicio, monto ARS, monto USD opcional, fecha de transaccion, fecha de pago/debito, plazo de pago, medio de pago, estado de pago/cobro, descripcion, referencias a adjuntos.
+- `receivables`: contraparte, venta de hacienda/contrato/servicio/transaccion origen, monto, moneda, fecha de venta o emision, fecha esperada de cobro, instrumento de pago, estado, usuario asignado, fecha de cobro.
+- `payment_obligations`: contraparte, compra/contrato/servicio/transaccion origen, monto, moneda, fecha de compra o emision, fecha de vencimiento, plazo de pago, medio de pago, estado, usuario asignado, fecha de pago.
 - `employees`: identidad/contacto, rol/puesto, fecha de inicio, estado activo, notas.
 - `work_entries`: referencia a empleado, fecha, descripcion del trabajo, horas/dias/cantidad, notas.
 - `employee_payments`: referencia a empleado, fecha, monto, tipo, periodo inicio/fin, notas.
@@ -75,6 +78,8 @@ El soporte de graficos debe salir de los mismos registros normalizados usados po
 - Riesgo laboral/legal: las reglas de liquidacion de sueldos en Argentina estan fuera de alcance para v1; la UI y la documentacion no deben insinuar cumplimiento legal.
 - Riesgo de importacion: las planillas existentes pueden tener nombres de columnas inconsistentes, duplicados, identificadores faltantes o monedas mezcladas.
 - Riesgo de recordatorios: el envio de email depende de configuracion del proveedor, entregabilidad y datos correctos de destinatarios.
+- Riesgo de flujo de caja: cheques diferidos por venta de hacienda y otras cobranzas demoradas pueden hacer que ingresos registrados parezcan efectivo disponible si no se separan claramente cuentas a cobrar y efectivo cobrado.
+- Riesgo de sorpresa por gastos: compras diferidas, facturas de servicios, pagos con tarjeta, cheques y debitos automaticos pueden generar debitos futuros faciles de olvidar si no se separan claramente gastos comprometidos y efectivo pagado.
 - Riesgo de control de acceso: los datos financieros y de pagos requieren pruebas estrictas de roles y Row Level Security.
 - Riesgo de localizacion: los docs en ingles para desarrollo y los docs en espanol para operadores pueden desalinearse si no se mantienen juntos.
 - Riesgo de uso movil: los usuarios de campo necesitan carga rapida en telefono aunque la sincronizacion offline se difiera.
@@ -99,7 +104,7 @@ El soporte de graficos debe salir de los mismos registros normalizados usados po
   - Agregar esquema Supabase, roles, datos seed y Row Level Security.
   - Agregar tests de limites de acceso.
 - M5: Tablero y recordatorios de pago
-  - Construir obligaciones de pago, estados por vencer/vencido en tablero y job de recordatorio por email.
+  - Construir obligaciones de pago, gastos diferidos, cuentas a cobrar por ventas de hacienda, estados por vencer/vencido en tablero, separacion de flujo de caja y job de recordatorio por email.
 - M6: Seguimiento de hacienda
   - Construir perfiles de hacienda, historial de peso, graficos de peso en el tiempo y registros sanitarios.
 - M7: Modulos operativos
@@ -128,6 +133,8 @@ El soporte de graficos debe salir de los mismos registros normalizados usados po
   - Denegacion de acceso por rol.
   - Vista previa de importacion, errores de validacion y guardado.
   - Estado de recordatorios en tablero y seleccion del job de email.
+  - Estado de gastos diferidos en el tablero para casos contado, 30 dias, 60 dias, personalizado, pagado, a pagar y vencido.
+  - Estado de cuentas a cobrar por ventas de hacienda en el tablero para casos contado, 30 dias, 60 dias, personalizado, cobrado y vencido.
   - Lineas de tiempo de peso/sanidad en perfil de hacienda y graficos responsive de peso.
   - Graficos de analitica de cultivos para costos, actividad y metricas de produccion/rinde.
   - Exportacion de pagos/liquidacion.

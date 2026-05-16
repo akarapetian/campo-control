@@ -13,6 +13,8 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 - Use ARS as the primary currency, with optional USD reference fields where business records require it.
 - Import core records from CSV/Excel templates with validation before committing data.
 - Track finances, employees, payroll-related payments, contracts, services, crop operations, cattle profiles, cattle weights, and cattle health events.
+- Track cattle sales with upfront, 30-day, 60-day, and custom deferred collection terms so expected cash inflows are visible before the money is collected.
+- Track purchases, services, and expense obligations with upfront, 30-day, 60-day, and custom deferred payment terms so future cash outflows are visible before the account is debited.
 - Show responsive graphs for operational trends such as cow weight over time, crop costs, crop activity, and production/yield metrics when data is available.
 - Show due and overdue payment reminders in the app and send email reminders to assigned users.
 - Include a dark operational UI and a fun cow logo in the login screen and app navigation.
@@ -35,7 +37,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
   - Review finances, contracts, services, crop records, employees, and cattle records.
 - Office user:
   - Import spreadsheet data for finances, employees, contracts, services, cattle, weights, and health records.
-  - Track payments, due dates, employee payments, advances, and payroll export reports.
+  - Track payments, receivables, due dates, employee payments, advances, and payroll export reports.
   - Mark obligations as paid and maintain counterparty records.
 - Field user:
   - Search cattle by tag/identifier.
@@ -53,11 +55,14 @@ Primary modules:
 - Dashboard:
   - Upcoming payment obligations.
   - Overdue payment obligations.
+  - Upcoming and overdue cattle-sale collections, including deferred 30/60-day terms.
+  - Upcoming and overdue deferred expenses so operators can see expected account deductions before they happen.
   - Recent imports.
   - Cattle health alerts.
   - Quick links for common entry flows.
 - Cattle:
   - Cattle profile with tag/identifier, status, origin, birth/acquisition data, notes, and ownership context.
+  - Sale records for sold animals or lots, including buyer, sale date, price, payment method, collection terms, expected collection date, and collected status.
   - Weight timeline across time.
   - Health event history with treatments, symptoms, dates, and notes.
 - Crops:
@@ -71,7 +76,8 @@ Primary modules:
   - Crop production/yield charts when harvest or output metrics are recorded.
   - Responsive chart layouts that remain readable on desktop and mobile.
 - Finance:
-  - Income, expenses, categories, counterparties, payment obligations, paid status, due dates, and attachments.
+  - Income, expenses, categories, counterparties, payment obligations, receivables, paid/collected status, due dates, expected collection dates, and attachments.
+  - Deferred expense tracking with purchase date, payment/debit date, payment terms, payment method, and paid status.
   - ARS-first display with optional USD reference fields.
 - Employees and payroll tracking:
   - Employee records, work entries, advances, payments, and exportable payroll/payment reports.
@@ -112,6 +118,11 @@ Roles:
 - Given chart data is missing or sparse, when a user opens a graph area, then the app shows an empty-state message in Spanish instead of a broken or misleading chart.
 - Given a payment obligation has a future due date, when it is within the configured reminder window, then it appears as upcoming on the dashboard.
 - Given a payment obligation is past due and unpaid, when a user opens the dashboard, then it appears as overdue until marked paid.
+- Given an expense is recorded with 30-day, 60-day, or custom deferred payment terms, when a user opens the dashboard before the payment/debit date, then the expense appears as an upcoming cash outflow and is not counted as already paid.
+- Given a deferred expense is due today or past due and unpaid, when a user opens the dashboard, then it appears as due or overdue until marked paid.
+- Given a cattle sale is recorded with upfront payment, when the dashboard calculates cash received, then the sale can be counted as collected on the sale date once marked received.
+- Given a cattle sale is recorded with 30-day, 60-day, or custom deferred payment terms, when a user opens the dashboard before the expected collection date, then the sale appears as an upcoming receivable and is not counted as received cash.
+- Given a cattle-sale receivable is past its expected collection date and not marked collected, when a user opens the dashboard, then it appears as overdue until marked collected.
 - Given email reminders are enabled, when the reminder job runs, then assigned users receive reminders for due and overdue payment obligations.
 - Given a field user is logged in, when they try to access finance or payroll settings, then access is denied.
 - Given a read-only/accountant user is logged in, when they try to create, edit, import, or mark a payment paid, then access is denied.
@@ -124,5 +135,7 @@ Roles:
 - Which email provider should be used for production reminder delivery?
 - What default reminder window should be used: 7 days before due date, 3 days before due date, day-of, or a combination?
 - Which spreadsheet fields are present in the business's existing finance, employee, cattle, contract, service, crop, weight, and health records?
+- Which cattle-sale payment terms should be offered by default: upfront, 30 days, 60 days, 90 days, custom date, installments, or all of these?
+- Which expense payment terms should be offered by default: upfront, 30 days, 60 days, 90 days, custom date, installments, automatic debit, or all of these?
 - Should attachments be required for contracts and payment receipts in v1, or optional only?
 - Which reports are most important for the first release: finance summary, payroll/payment export, cattle health, cattle weight, contract obligations, or crop cost report?

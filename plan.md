@@ -18,6 +18,7 @@
 - Row Level Security enforces role-based access for owner/admin, office user, field user, and read-only/accountant.
 - Supabase Storage stores attachments such as contracts, receipts, and supporting documents.
 - Scheduled jobs identify upcoming and overdue payment obligations and send email reminders.
+- Dashboard cash-flow views distinguish obligations to pay from receivables to collect, including cattle-sale collections and deferred expenses that may be upfront, deferred 30/60 days, or set to a custom date.
 - Analytics views query normalized operational tables directly for v1 charts:
   - Cattle weight charts use `weight_records` filtered by `cattle_id` and ordered by `date`.
   - Crop charts use `crop_cycles`, `crop_events`, `services`, `financial_transactions`, and `crop_outputs` filtered by field, cycle, metric, and date range.
@@ -38,6 +39,7 @@ Initial domain entities:
 
 - `profiles`: user profile, display name, role, notification email, active status.
 - `cattle`: tag/identifier, name or label, status, sex, breed, birth date, acquisition date, origin, notes.
+- `cattle_sales`: cattle or lot references, buyer/counterparty, sale date, gross amount ARS, optional amount USD, payment method, payment terms, expected collection date, collected date, status, notes.
 - `weight_records`: cattle reference, date, weight, unit, notes, recorded by.
 - `health_records`: cattle reference, date, type, symptoms, treatment, medication, veterinarian, follow-up date, notes.
 - `crop_fields`: field/lot name, location notes, area, active status.
@@ -47,8 +49,9 @@ Initial domain entities:
 - `counterparties`: vendors, customers, contractors, service providers, contact details.
 - `contracts`: counterparty reference, type, start/end dates, summary, status, attachment references.
 - `services`: crop/cattle/business service records, optional crop field/cycle/cattle references, counterparty reference, date, description, cost, linked contract, notes.
-- `financial_transactions`: income/expense type, category, counterparty, optional crop field/cycle/service references, amount ARS, optional amount USD, date, description, attachment references.
-- `payment_obligations`: counterparty, source contract/service/transaction, amount, currency, due date, status, assigned user, paid date.
+- `financial_transactions`: income/expense type, category, counterparty, optional crop field/cycle/service references, amount ARS, optional amount USD, transaction date, payment/debit date, payment terms, payment method, paid/collected status, description, attachment references.
+- `receivables`: counterparty, source cattle sale/contract/service/transaction, amount, currency, sale or issue date, expected collection date, payment instrument, status, assigned user, collected date.
+- `payment_obligations`: counterparty, source purchase/contract/service/transaction, amount, currency, purchase or issue date, due date, payment terms, payment method, status, assigned user, paid date.
 - `employees`: identity/contact details, role/job, start date, active status, notes.
 - `work_entries`: employee reference, date, work description, hours/days/quantity, notes.
 - `employee_payments`: employee reference, date, amount, type, period start/end, notes.
@@ -75,6 +78,8 @@ Chart support should come from the same normalized records used by operational s
 - Payroll/legal risk: Argentine payroll rules are out of scope for v1; UI and docs must avoid implying legal compliance.
 - Data import risk: existing spreadsheets may have inconsistent column names, duplicates, missing identifiers, or mixed currencies.
 - Reminder risk: email delivery depends on provider setup, deliverability, and correct recipient data.
+- Cash-flow risk: deferred cattle-sale checks and other delayed collections can make booked income look like available cash unless receivables and collected cash are clearly separated.
+- Expense surprise risk: deferred purchases, service bills, card payments, checks, and automatic debits can create future account deductions that are easy to forget unless committed expenses and paid cash are clearly separated.
 - Access-control risk: finance and payroll data require strict role and Row Level Security tests.
 - Localization risk: English developer docs and Spanish operator docs can drift if artifacts are not maintained together.
 - Mobile usability risk: field users need fast entry on phones even though offline sync is deferred.
@@ -99,7 +104,7 @@ Chart support should come from the same normalized records used by operational s
   - Add Supabase schema, roles, seed data, and Row Level Security.
   - Add tests for access boundaries.
 - M5: Dashboard and payment reminders
-  - Build payment obligations, due/overdue dashboard states, and email reminder job.
+  - Build payment obligations, deferred expenses, cattle-sale receivables, due/overdue dashboard states, cash-flow separation, and email reminder job.
 - M6: Cattle tracking
   - Build cattle profiles, weight history, weight-over-time charts, and health records.
 - M7: Operations modules
@@ -128,6 +133,8 @@ Chart support should come from the same normalized records used by operational s
   - Role-based access denial.
   - Spreadsheet import preview, validation errors, and commit.
   - Payment reminder dashboard state and email job selection.
+  - Deferred expense dashboard state for upfront, 30-day, 60-day, custom, paid, due, and overdue cases.
+  - Cattle-sale receivable dashboard state for upfront, 30-day, 60-day, custom, collected, and overdue cases.
   - Cattle profile weight/health timelines and responsive weight charts.
   - Crop analytics charts for costs, activity, and output/yield metrics.
   - Payroll/payment export.

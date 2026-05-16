@@ -13,6 +13,8 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
 - Usar ARS como moneda principal, con campos opcionales de referencia en USD cuando los registros del negocio lo requieran.
 - Importar registros principales desde plantillas CSV/Excel con validacion antes de guardar datos.
 - Registrar finanzas, empleados, pagos relacionados con liquidacion, contratos, servicios, operaciones agricolas, perfiles de hacienda, pesos y eventos sanitarios.
+- Registrar ventas de hacienda con cobro contado, a 30 dias, a 60 dias y con plazos personalizados para ver ingresos esperados antes de cobrar el dinero.
+- Registrar compras, servicios y obligaciones de gasto con pago contado, a 30 dias, a 60 dias y con plazos personalizados para ver egresos futuros antes de que se debite la cuenta.
 - Mostrar graficos responsive de tendencias operativas como peso de animales a lo largo del tiempo, costos de cultivos, actividad agricola y metricas de produccion/rinde cuando haya datos disponibles.
 - Mostrar recordatorios de pagos por vencer y vencidos dentro de la app, y enviar recordatorios por email a usuarios asignados.
 - Incluir una interfaz operativa oscura y un logo divertido de vaca en la pantalla de inicio de sesion y en la navegacion.
@@ -35,7 +37,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
   - Revisar finanzas, contratos, servicios, registros agricolas, empleados y registros de hacienda.
 - Usuario de oficina:
   - Importar planillas de finanzas, empleados, contratos, servicios, hacienda, pesos y sanidad.
-  - Registrar pagos, vencimientos, pagos a empleados, adelantos y reportes exportables para liquidacion/pagos.
+  - Registrar pagos, cuentas a cobrar, vencimientos, pagos a empleados, adelantos y reportes exportables para liquidacion/pagos.
   - Marcar obligaciones como pagadas y mantener registros de contrapartes.
 - Usuario de campo:
   - Buscar animales por caravana/identificador.
@@ -53,11 +55,14 @@ Modulos principales:
 - Tablero:
   - Obligaciones de pago proximas.
   - Obligaciones de pago vencidas.
+  - Cobranzas de ventas de hacienda proximas y vencidas, incluyendo plazos diferidos de 30/60 dias.
+  - Gastos diferidos proximos y vencidos para que los operadores vean debitos esperados antes de que ocurran.
   - Importaciones recientes.
   - Alertas sanitarias de hacienda.
   - Accesos rapidos para flujos de carga frecuentes.
 - Hacienda:
   - Perfil del animal con caravana/identificador, estado, origen, datos de nacimiento/adquisicion, notas y contexto de propiedad.
+  - Registros de venta para animales o lotes vendidos, incluyendo comprador, fecha de venta, precio, medio de pago, plazo de cobro, fecha esperada de cobro y estado de cobro.
   - Historial de peso a lo largo del tiempo.
   - Historial sanitario con tratamientos, sintomas, fechas y notas.
 - Cultivos:
@@ -71,7 +76,8 @@ Modulos principales:
   - Graficos de produccion/rinde cuando se registren metricas de cosecha o salida.
   - Layouts de graficos responsive que sigan siendo legibles en escritorio y movil.
 - Finanzas:
-  - Ingresos, egresos, categorias, contrapartes, obligaciones de pago, estado de pago, vencimientos y adjuntos.
+  - Ingresos, egresos, categorias, contrapartes, obligaciones de pago, cuentas a cobrar, estado de pago/cobro, vencimientos, fechas esperadas de cobro y adjuntos.
+  - Seguimiento de gastos diferidos con fecha de compra, fecha de pago/debito, plazo de pago, medio de pago y estado de pago.
   - Visualizacion primero en ARS, con campos opcionales de referencia en USD.
 - Empleados y seguimiento de pagos/liquidacion:
   - Registros de empleados, partes de trabajo, adelantos, pagos y reportes exportables de pagos/liquidacion.
@@ -112,6 +118,11 @@ Roles:
 - Dado que los datos de un grafico faltan o son escasos, cuando un usuario abre un area de graficos, entonces la app muestra un mensaje de estado vacio en espanol en lugar de un grafico roto o enganoso.
 - Dado que una obligacion de pago tiene una fecha de vencimiento futura, cuando esta dentro de la ventana configurada de recordatorio, entonces aparece como proxima en el tablero.
 - Dado que una obligacion de pago esta vencida e impaga, cuando un usuario abre el tablero, entonces aparece como vencida hasta que se marque como pagada.
+- Dado que un gasto se registra con plazo de 30 dias, 60 dias o una fecha personalizada, cuando un usuario abre el tablero antes de la fecha de pago/debito, entonces el gasto aparece como egreso proximo y no se cuenta como ya pagado.
+- Dado que un gasto diferido vence hoy o esta vencido e impago, cuando un usuario abre el tablero, entonces aparece como a pagar o vencido hasta que se marque como pagado.
+- Dado que una venta de hacienda se registra con pago contado, cuando el tablero calcula el efectivo cobrado, entonces la venta puede contarse como cobrada en la fecha de venta una vez marcada como recibida.
+- Dado que una venta de hacienda se registra con plazo de 30 dias, 60 dias o una fecha personalizada, cuando un usuario abre el tablero antes de la fecha esperada de cobro, entonces la venta aparece como cuenta a cobrar proxima y no se cuenta como efectivo cobrado.
+- Dado que una cuenta a cobrar por venta de hacienda paso su fecha esperada de cobro y no esta marcada como cobrada, cuando un usuario abre el tablero, entonces aparece como vencida hasta que se marque como cobrada.
 - Dado que los recordatorios por email estan habilitados, cuando corre el job de recordatorios, entonces los usuarios asignados reciben recordatorios de obligaciones por vencer y vencidas.
 - Dado que un usuario de campo inicio sesion, cuando intenta acceder a configuracion de finanzas o pagos/liquidacion, entonces se deniega el acceso.
 - Dado que un usuario solo lectura/contador inicio sesion, cuando intenta crear, editar, importar o marcar un pago como pagado, entonces se deniega el acceso.
@@ -124,5 +135,7 @@ Roles:
 - Que proveedor de email se usara para enviar recordatorios en produccion?
 - Que ventana predeterminada de recordatorio se usara: 7 dias antes del vencimiento, 3 dias antes, el mismo dia, o una combinacion?
 - Que campos tienen las planillas actuales del negocio para finanzas, empleados, hacienda, contratos, servicios, cultivos, pesos y sanidad?
+- Que plazos de venta de hacienda deben estar disponibles por defecto: contado, 30 dias, 60 dias, 90 dias, fecha personalizada, cuotas, o todos estos?
+- Que plazos de gastos deben estar disponibles por defecto: contado, 30 dias, 60 dias, 90 dias, fecha personalizada, cuotas, debito automatico, o todos estos?
 - Los adjuntos deben ser obligatorios para contratos y comprobantes de pago en v1, o solo opcionales?
 - Que reportes son mas importantes para la primera version: resumen financiero, exportacion de pagos/liquidacion, sanidad de hacienda, pesos de hacienda, obligaciones contractuales o costos de cultivos?
