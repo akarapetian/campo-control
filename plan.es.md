@@ -3,7 +3,7 @@
 ## Stack Tecnologico
 
 - Frontend: Vite, React, TypeScript.
-- UI: tema oscuro, layouts desktop-first, textos operativos en espanol, contraste accesible y pantallas compactas con alta densidad de datos y tolerancia basica para anchos reducidos.
+- UI: tema oscuro, layouts desktop-first, textos operativos con espanol como predeterminado y soporte de selector a ingles, contraste accesible y pantallas compactas con alta densidad de datos y tolerancia basica para anchos reducidos.
 - Graficos: componentes React responsive para series temporales y graficos por categoria, respaldados por helpers de consulta tipados en vez de datos de ejemplo hard-codeados.
 - Backend: Supabase Auth, Postgres, Row Level Security, Storage y Edge Functions o jobs programados.
 - Importaciones: parseo de CSV y Excel en el flujo de app/backend con vista previa de validacion antes de guardar.
@@ -42,7 +42,8 @@ Estructura de app:
 - Estructura oscura persistente con logo de vaca de Campo Control, navegacion principal, menu de usuario y visibilidad de opciones segun rol.
 - En escritorio usa navegacion lateral y layouts densos basados en tablas.
 - En anchos reducidos usa layouts apilados cuando sea practico, pero la navegacion especifica para telefono y las pantallas de carga de campo quedan diferidas de v1.
-- Textos operativos, estados vacios, validacion, filtros y acciones solo en espanol.
+- Textos operativos, estados vacios, validacion, filtros y acciones usan espanol por defecto; las etiquetas soportadas de estructura/tablero/login pueden cambiar a ingles con un selector de idioma sin cambiar el comportamiento de negocio basado en ARS.
+- La preferencia de idioma debe representarse como estado de la app en v1 y luego puede moverse al perfil del usuario.
 
 Tablero:
 
@@ -81,6 +82,7 @@ UI de reportes y configuracion:
 - Los reportes se enfocan en resumen financiero, exportacion de pagos/liquidacion, sanidad de hacienda, peso de hacienda, obligaciones contractuales y costos de cultivos.
 - Configuracion cubre usuarios, roles, ventanas de recordatorio y plantillas de importacion.
 - Las pantallas de reportes de pagos/liquidacion no deben usar lenguaje de cumplimiento legal laboral.
+- Configuracion deberia exponer luego la preferencia de idioma del usuario; v1 puede mantener el selector en el login y estructura de app.
 
 ## Modelo De Datos
 
@@ -136,6 +138,7 @@ El soporte de graficos debe salir de los mismos registros normalizados usados po
 - Riesgo de sorpresa por gastos: compras diferidas, facturas de servicios, pagos con tarjeta, cheques y debitos automaticos pueden generar debitos futuros faciles de olvidar si no se separan claramente gastos comprometidos y efectivo pagado.
 - Riesgo de control de acceso: los datos financieros y de pagos requieren pruebas estrictas de roles y Row Level Security.
 - Riesgo de localizacion: los docs en ingles para desarrollo y los docs en espanol para operadores pueden desalinearse si no se mantienen juntos.
+- Riesgo de traduccion: el espanol sigue siendo el idioma predeterminado del producto, pero la copia en ingles del selector puede desalinearse o quedar incompleta si los textos de UI no se centralizan.
 - Riesgo de alcance: los usuarios de campo pueden necesitar carga rapida en telefono, pero v1 prioriza intencionalmente flujos de oficina en escritorio y difiere UX movil especializada.
 - Riesgo de modelo de datos: `cash_flow_items` y `crop_events` pueden volverse tablas comodin demasiado vagas si las plantillas v1 no acotan tipos permitidos, fechas requeridas, estados y referencias de origen.
 - Riesgo de analitica: los graficos solo seran utiles si las importaciones y formularios capturan fechas, vinculos a lote/ciclo, unidades y categorias de forma consistente.
@@ -183,7 +186,7 @@ El soporte de graficos debe salir de los mismos registros normalizados usados po
   - Refactorizar solo despues de tener tests en verde.
 - Validar flujos importantes con tests automatizados:
   - Login/estructura de app y tema oscuro.
-  - Textos de UI en espanol para pantallas operativas.
+  - Texto de UI en espanol por defecto y comportamiento del selector de ingles para pantallas soportadas de estructura/tablero/login.
   - Denegacion de acceso por rol.
   - Vista previa de importacion, errores de validacion y guardado.
   - Estado de recordatorios en tablero y seleccion del job de email.

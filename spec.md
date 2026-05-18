@@ -9,7 +9,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 ## Goals
 
 - Provide a desktop-first online web app for office and administrative use, with basic responsive tolerance for tablet and narrow browser widths.
-- Support Spanish-only operator screens using Argentine Spanish.
+- Default operator screens to Argentine Spanish, with an in-app English language toggle for English-speaking owners/admins and collaborators.
 - Use ARS as the primary currency, with optional USD reference fields where business records require it.
 - Import core records from CSV/Excel templates with validation before committing data.
 - Track finances, employees, payroll-related payments, contracts, services, crop operations, cattle profiles, cattle weights, and cattle health events.
@@ -27,7 +27,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 - Do not support offline-first field data entry in v1.
 - Do not build specialized mobile field-entry workflows in v1.
 - Do not build bank, vendor, government, or WhatsApp integrations in v1.
-- Do not support English operator screens in v1.
+- Do not make English the default operator language in v1.
 - Do not replace specialist veterinary, accounting, or agronomy systems where legally or professionally required.
 
 ## Users And Use Cases
@@ -36,6 +36,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
   - See a high-level dashboard of payments, herd status, recent imports, and operational alerts.
   - Manage users, roles, imports, settings, and reports.
   - Review finances, contracts, services, crop records, employees, and cattle records.
+  - Switch the UI between Spanish and English when needed for English-speaking collaborators.
 - Office user:
   - Import spreadsheet data for finances, employees, contracts, services, cattle, weights, and health records.
   - Track payments, receivables, due dates, employee payments, advances, and payroll export reports.
@@ -49,7 +50,7 @@ Campo Control will provide a dark-themed Spanish web app for Argentine agricultu
 
 ## Design
 
-Campo Control will be a Vite + React web app backed by Supabase Auth, Postgres, Storage, and scheduled jobs. The UI will be dark themed, dense, and operational rather than marketing-oriented. It should prioritize searchable tables, clear status labels, desktop office workflows, and dashboard alerts. Mobile-specific field entry is deferred from v1.
+Campo Control will be a Vite + React web app backed by Supabase Auth, Postgres, Storage, and scheduled jobs. The UI will be dark themed, dense, and operational rather than marketing-oriented. It should prioritize searchable tables, clear status labels, desktop office workflows, and dashboard alerts. Mobile-specific field entry is deferred from v1. Spanish is the default UI language, with an English toggle available in the app shell and login screen.
 
 Primary modules:
 
@@ -109,6 +110,8 @@ Roles:
 - Given a user opens the app, when the login screen appears, then it uses the dark theme and shows the Campo Control cow logo.
 - Given an authenticated user is in the app, when navigation is visible, then the cow logo appears in the app shell.
 - Given an operator uses the app, when they view labels, forms, validation messages, and navigation, then operator-facing text is in Argentine Spanish.
+- Given an English-speaking user changes the language toggle to English, when they view supported navigation, dashboard, and login copy, then those labels appear in English without changing ARS currency defaults or Spanish-first business assumptions.
+- Given a user returns to Spanish from the language toggle, when they view supported navigation, dashboard, and login copy, then those labels appear in Argentine Spanish again.
 - Given money values are displayed, when no alternate currency is specified, then ARS is the default currency.
 - Given a spreadsheet import template is uploaded, when required fields are valid, then the app previews records before saving them.
 - Given a spreadsheet import contains invalid rows, when validation runs, then the app shows Spanish row-level errors and does not save invalid records.

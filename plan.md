@@ -3,7 +3,7 @@
 ## Tech Stack
 
 - Frontend: Vite, React, TypeScript.
-- UI: Dark theme, desktop-first layouts, Spanish operator copy, accessible contrast, and compact data-dense screens with basic narrow-width tolerance.
+- UI: Dark theme, desktop-first layouts, Spanish-default operator copy with English toggle support, accessible contrast, and compact data-dense screens with basic narrow-width tolerance.
 - Charts: Responsive React chart components for time-series and category charts, backed by typed query helpers instead of hard-coded sample data.
 - Backend: Supabase Auth, Postgres, Row Level Security, Storage, and Edge Functions or scheduled jobs.
 - Imports: CSV and Excel parsing in the app/backend workflow with validation preview before commit.
@@ -42,7 +42,8 @@ App shell:
 - Persistent dark app shell with Campo Control cow logo, primary navigation, user menu, and role-aware menu visibility.
 - Desktop uses a left navigation rail and dense table-first layouts.
 - Narrow widths use stacked layouts where practical, but specialized phone navigation and field-entry screens are deferred from v1.
-- Operator-facing text, empty states, validation, filters, and actions are Spanish-only.
+- Operator-facing text, empty states, validation, filters, and actions default to Spanish; supported shell/dashboard/login labels can switch to English through a language toggle without changing ARS-first business behavior.
+- Language preference should be represented as app state in v1 and can later move to the user profile.
 
 Dashboard:
 
@@ -81,6 +82,7 @@ Reports and settings UI:
 - Reports focus on finance summary, payroll/payment export, cattle health, cattle weight, contract obligations, and crop cost outputs.
 - Settings cover users, roles, reminder windows, and import templates.
 - Payroll/payment report screens must avoid legal payroll compliance language.
+- Settings should eventually expose the user language preference; v1 can keep the toggle in the app shell and login.
 
 ## Data Model
 
@@ -136,6 +138,7 @@ Chart support should come from the same normalized records used by operational s
 - Expense surprise risk: deferred purchases, service bills, card payments, checks, and automatic debits can create future account deductions that are easy to forget unless committed expenses and paid cash are clearly separated.
 - Access-control risk: finance and payroll data require strict role and Row Level Security tests.
 - Localization risk: English developer docs and Spanish operator docs can drift if artifacts are not maintained together.
+- Translation risk: Spanish remains the product default, but English toggle copy can drift or be incomplete unless UI strings are centralized.
 - Scope risk: field users may want fast phone entry, but v1 intentionally prioritizes desktop office workflows and defers specialized mobile UX.
 - Data model risk: `cash_flow_items` and `crop_events` can become vague catch-all tables unless v1 templates constrain allowed types, required dates, statuses, and source links.
 - Analytics risk: graphs will only be useful if imports and forms capture dates, field/cycle links, units, and categories consistently.
@@ -183,7 +186,7 @@ Chart support should come from the same normalized records used by operational s
   - Refactor only after passing tests.
 - Validate important flows with automated tests:
   - Login/app shell and dark theme.
-  - Spanish UI copy for operator-facing screens.
+  - Spanish default UI copy and English toggle behavior for supported shell/dashboard/login screens.
   - Role-based access denial.
   - Spreadsheet import preview, validation errors, and commit.
   - Payment reminder dashboard state and email job selection.

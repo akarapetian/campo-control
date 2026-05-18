@@ -9,7 +9,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
 ## Objetivos
 
 - Proveer una aplicacion web online desktop-first para uso de oficina y administracion, con tolerancia responsive basica para tablet y anchos reducidos de navegador.
-- Soportar pantallas operativas solo en espanol argentino.
+- Usar espanol argentino como idioma predeterminado de pantallas operativas, con un selector de ingles dentro de la app para duenios/admins y colaboradores que hablan ingles.
 - Usar ARS como moneda principal, con campos opcionales de referencia en USD cuando los registros del negocio lo requieran.
 - Importar registros principales desde plantillas CSV/Excel con validacion antes de guardar datos.
 - Registrar finanzas, empleados, pagos relacionados con liquidacion, contratos, servicios, operaciones agricolas, perfiles de hacienda, pesos y eventos sanitarios.
@@ -27,7 +27,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
 - No soportar carga offline-first de datos de campo en v1.
 - No construir flujos moviles especializados para carga de datos de campo en v1.
 - No construir integraciones bancarias, con proveedores, organismos publicos ni WhatsApp en v1.
-- No soportar pantallas operativas en ingles en v1.
+- No hacer que el ingles sea el idioma operativo predeterminado en v1.
 - No reemplazar sistemas veterinarios, contables o agronomicos especializados cuando sean legal o profesionalmente necesarios.
 
 ## Usuarios Y Casos De Uso
@@ -36,6 +36,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
   - Ver un tablero general de pagos, estado de hacienda, importaciones recientes y alertas operativas.
   - Administrar usuarios, roles, importaciones, configuracion y reportes.
   - Revisar finanzas, contratos, servicios, registros agricolas, empleados y registros de hacienda.
+  - Cambiar la UI entre espanol e ingles cuando lo necesiten colaboradores que hablan ingles.
 - Usuario de oficina:
   - Importar planillas de finanzas, empleados, contratos, servicios, hacienda, pesos y sanidad.
   - Registrar pagos, cuentas a cobrar, vencimientos, pagos a empleados, adelantos y reportes exportables para liquidacion/pagos.
@@ -49,7 +50,7 @@ Campo Control sera una aplicacion web oscura, en espanol argentino, para que ope
 
 ## Diseno
 
-Campo Control sera una aplicacion web con Vite + React respaldada por Supabase Auth, Postgres, Storage y jobs programados. La interfaz sera oscura, densa y operativa, no orientada a marketing. Debe priorizar tablas buscables, etiquetas de estado claras, flujos de oficina en escritorio y alertas en el tablero. La carga movil especifica para campo queda diferida de v1.
+Campo Control sera una aplicacion web con Vite + React respaldada por Supabase Auth, Postgres, Storage y jobs programados. La interfaz sera oscura, densa y operativa, no orientada a marketing. Debe priorizar tablas buscables, etiquetas de estado claras, flujos de oficina en escritorio y alertas en el tablero. La carga movil especifica para campo queda diferida de v1. El espanol es el idioma predeterminado de la UI, con un selector de ingles disponible en el login y en la estructura de la app.
 
 Modulos principales:
 
@@ -109,6 +110,8 @@ Roles:
 - Dado que un usuario abre la app, cuando aparece la pantalla de inicio de sesion, entonces usa el tema oscuro y muestra el logo de vaca de Campo Control.
 - Dado que un usuario autenticado esta dentro de la app, cuando la navegacion esta visible, entonces el logo de vaca aparece en la estructura de la app.
 - Dado que un operador usa la app, cuando ve etiquetas, formularios, mensajes de validacion y navegacion, entonces el texto operativo esta en espanol argentino.
+- Dado que un usuario que habla ingles cambia el selector de idioma a ingles, cuando ve la navegacion, el tablero y el login soportados, entonces esas etiquetas aparecen en ingles sin cambiar la moneda ARS ni los supuestos de negocio con espanol como idioma principal.
+- Dado que un usuario vuelve a espanol desde el selector de idioma, cuando ve la navegacion, el tablero y el login soportados, entonces esas etiquetas vuelven a aparecer en espanol argentino.
 - Dado que se muestran valores monetarios, cuando no se especifica otra moneda, entonces ARS es la moneda predeterminada.
 - Dado que se sube una plantilla de importacion, cuando los campos requeridos son validos, entonces la app muestra una vista previa de los registros antes de guardarlos.
 - Dado que una importacion contiene filas invalidas, cuando se ejecuta la validacion, entonces la app muestra errores por fila en espanol y no guarda registros invalidos.

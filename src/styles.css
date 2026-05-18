@@ -1,0 +1,328 @@
+:root {
+  color: #eef3ee;
+  background: #07110d;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #07110d;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.theme-dark {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(49, 122, 92, 0.22), transparent 32rem),
+    linear-gradient(135deg, #07110d 0%, #111816 55%, #17120d 100%);
+  color: #eef3ee;
+}
+
+.login-screen {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 2rem;
+}
+
+.login-panel {
+  display: grid;
+  width: min(100%, 440px);
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(180, 201, 184, 0.2);
+  border-radius: 8px;
+  background: rgba(13, 24, 20, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+}
+
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cow-logo {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.cow-logo__badge {
+  fill: #f5f0df;
+}
+
+.cow-logo__horn {
+  fill: #c99f5b;
+}
+
+.cow-logo__head {
+  fill: #fbf7e8;
+}
+
+.cow-logo__spot,
+.cow-logo__eye,
+.cow-logo__nostril {
+  fill: #25332b;
+}
+
+.cow-logo__muzzle {
+  fill: #d8aa9a;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: #91c7a2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.login-copy,
+.access-note {
+  color: #b8c4bd;
+  line-height: 1.5;
+}
+
+.access-note {
+  color: #ffd49a;
+  font-weight: 700;
+}
+
+.primary-button,
+.secondary-button,
+.language-toggle {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-button {
+  background: #58b77a;
+  color: #07110d;
+}
+
+.secondary-button {
+  padding: 0 1rem;
+  border: 1px solid rgba(180, 201, 184, 0.22);
+  background: #15231d;
+  color: #eef3ee;
+}
+
+.language-toggle {
+  padding: 0 0.9rem;
+  border: 1px solid rgba(145, 199, 162, 0.35);
+  background: transparent;
+  color: #91c7a2;
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 256px minmax(0, 1fr);
+  background: #09120e;
+  color: #eef3ee;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 1px solid rgba(180, 201, 184, 0.16);
+  background: #0d1712;
+  padding: 1.25rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 800;
+}
+
+.brand .cow-logo {
+  width: 40px;
+  height: 40px;
+}
+
+nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+nav a {
+  border-radius: 8px;
+  color: #c8d3cd;
+  padding: 0.72rem 0.8rem;
+}
+
+nav a:hover,
+nav a:focus-visible {
+  background: #17251f;
+  color: #ffffff;
+}
+
+.workspace {
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+.workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cash-flow-panel {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cash-flow-totals,
+.cash-flow-groups {
+  display: grid;
+  gap: 1rem;
+}
+
+.cash-flow-totals {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cash-flow-groups {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.cash-flow-panel article {
+  display: grid;
+  gap: 0.5rem;
+  min-height: 112px;
+  border: 1px solid rgba(180, 201, 184, 0.16);
+  border-radius: 8px;
+  background: #111b16;
+  padding: 1rem;
+}
+
+.cash-flow-panel span {
+  color: #9db0a5;
+}
+
+.cash-flow-panel strong {
+  font-size: 1.5rem;
+}
+
+.cattle-profile {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.profile-header p {
+  color: #b8c4bd;
+}
+
+.status-pill {
+  border: 1px solid rgba(145, 199, 162, 0.35);
+  border-radius: 999px;
+  color: #91c7a2;
+  padding: 0.25rem 0.65rem;
+}
+
+.record-list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.record-list li {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid rgba(180, 201, 184, 0.16);
+  border-radius: 8px;
+  background: #111b16;
+  padding: 0.85rem;
+}
+
+.record-list span,
+.empty-state {
+  color: #9db0a5;
+}
+
+.weight-chart {
+  display: flex;
+  align-items: end;
+  min-height: 120px;
+  gap: 0.75rem;
+  border: 1px solid rgba(180, 201, 184, 0.16);
+  border-radius: 8px;
+  background: #111b16;
+  padding: 1rem;
+}
+
+.weight-chart span {
+  display: grid;
+  width: 48px;
+  min-height: 24px;
+  place-items: end center;
+  border-radius: 6px 6px 0 0;
+  background: #58b77a;
+  color: #07110d;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding-bottom: 0.25rem;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(180, 201, 184, 0.16);
+  }
+
+  nav {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .workspace-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cash-flow-totals,
+  .cash-flow-groups {
+    grid-template-columns: 1fr;
+  }
+}
